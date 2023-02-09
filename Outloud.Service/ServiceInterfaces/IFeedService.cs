@@ -10,7 +10,7 @@ namespace Outloud.Service.ServiceInterfaces
 {
     public interface IFeedService
     {
-        public DateTime Date(string date);
+        public Task<DateTime> Date(string date);
         Task<IBaseResponse<Feed>> Create(Feed model);
         Task<BaseResponse<IEnumerable<Feed>>> GetAll();
     }
