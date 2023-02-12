@@ -31,7 +31,7 @@ namespace Outloud.Service.Implementations
             try
             {
                 XDocument xDoc = new XDocument();
-                xDoc = XDocument.Load(RssFeedUrl);
+                xDoc = XDocument.Load(model);
                 var items = (from x in xDoc.Descendants("item")
                              select new
                              {
