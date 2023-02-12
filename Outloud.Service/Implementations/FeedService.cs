@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Outloud.Service.Implementations
 {
@@ -25,26 +26,37 @@ namespace Outloud.Service.Implementations
 
         public async Task<IBaseResponse<Feed>> Create(Feed model)
         {
+            var model = "https://www.hltv.org/rss/news";
+            List<Feed> feeds = new List<Feed>();
             try
             {
-                var feed = await _feedRepository.GetAll().FirstOrDefaultAsync(x => x.Subs == model.Subs);
-                if (feed != null)
+                XDocument xDoc = new XDocument();
+                xDoc = XDocument.Load(RssFeedUrl);
+                var items = (from x in xDoc.Descendants("item")
+                             select new
+                             {
+                                 Designation = x.Element("Designation").Value,
+                                 URLadress = x.Element("urladress").Value,
+                                 pubDate = x.Element("pubDate").Value,
+                                 News = x.Element("news").Value
+                             });
+                if (items != null)
                 {
-                    return new BaseResponse<Feed>()
+                    foreach (var i in items)
                     {
-                        Description = "Feed is already exist",
-                    };
+                        Feed f = new Feed
+                        {
+                            Designation = i.Designation,
+                            URLadress = i.URLadress,
+                            PublishDate = i.pubDate,
+                            News = i.News,
+                            
+                        };
+
+                        feeds.Add(f);
+                    }
                 }
-                feed = new Feed()
-                {
-                    Subs = model.Subs,
-                };
-                await _feedRepository.Create(feed);
-                return new BaseResponse<Feed>()
-                {
-                    Data = feed,
-                    Description = "Feed added",
-                };
+                return feeds ;
             }
             catch (Exception ex)
             {
