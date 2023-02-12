@@ -52,7 +52,7 @@ namespace Outloud.Service.Implementations
                             News = i.News,
                             
                         };
-
+                        
                         feeds.Add(f);
                     }
                 }
